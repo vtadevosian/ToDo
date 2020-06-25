@@ -10,7 +10,7 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
-    var items: [String] = []
+    var items: [Item] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,8 +23,10 @@ class ToDoListViewController: UITableViewController {
         
         let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            guard let item = textField.text else { return }
-            self.items.append(item)
+            guard let itemTitle = textField.text else { return }
+            let newItem = Item()
+            newItem.title = itemTitle
+            self.items.append(newItem)
             self.tableView.reloadData()
         }
         
@@ -48,7 +50,8 @@ extension ToDoListViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = items[indexPath.row]
+        cell.textLabel?.text = items[indexPath.row].title
+        cell.accessoryType = items[indexPath.row].done ? .checkmark : .none
         return cell
     }
 }
@@ -57,8 +60,8 @@ extension ToDoListViewController {
 
 extension ToDoListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let isMarked = tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark
-        tableView.cellForRow(at: indexPath)?.accessoryType = isMarked ? .none : .checkmark
+        items[indexPath.row].done = !items[indexPath.row].done
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
