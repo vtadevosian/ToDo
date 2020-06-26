@@ -27,12 +27,11 @@ class ToDoListViewController: UITableViewController {
     @IBAction func addButtonTapped(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         
-        let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
-        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+        let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add", style: .default) { (action) in
             guard let itemTitle = textField.text,
                 let context = self.context else { return }
             
-            print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
             let newItem = Item(context: context)
             newItem.title = itemTitle
             newItem.done = false
@@ -62,10 +61,11 @@ class ToDoListViewController: UITableViewController {
     private func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
         do {
             items = try context?.fetch(request) ?? []
-            tableView.reloadData()
         } catch {
             print("Error fetching data from context: \(error).")
         }
+        
+        tableView.reloadData()
     }
 }
 
