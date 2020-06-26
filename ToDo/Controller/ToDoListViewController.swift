@@ -7,14 +7,16 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
 
+    let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     var items: [Item] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        loadData()
     }
     
     // MARK: - Add New Items
@@ -23,11 +25,15 @@ class ToDoListViewController: UITableViewController {
         
         let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            guard let itemTitle = textField.text else { return }
-            let newItem = Item()
+            guard let itemTitle = textField.text,
+                let context = self.context else { return }
+            
+            print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+            let newItem = Item(context: context)
             newItem.title = itemTitle
+            newItem.done = false
             self.items.append(newItem)
-            self.tableView.reloadData()
+            self.saveItems()
         }
         
         alert.addTextField { (alertTextField) in
@@ -39,6 +45,24 @@ class ToDoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    private func saveItems() {
+        do {
+            try context?.save()
+        } catch {
+            print("Error while saving context: \(error).")
+        }
+        
+        tableView.reloadData()
+    }
+    
+    private func loadData() {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            items = try context?.fetch(request) ?? []
+        } catch {
+            print("Error fetching data from context: \(error).")
+        }
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -50,8 +74,9 @@ extension ToDoListViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = items[indexPath.row].title
-        cell.accessoryType = items[indexPath.row].done ? .checkmark : .none
+        let item = items[indexPath.row]
+        cell.textLabel?.text = item.title
+        cell.accessoryType = item.done ? .checkmark : .none
         return cell
     }
 }
@@ -60,8 +85,11 @@ extension ToDoListViewController {
 
 extension ToDoListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        items[indexPath.row].done = !items[indexPath.row].done
-        tableView.reloadData()
+        let item = items[indexPath.row]
+//        context?.delete(item)
+//        items.remove(at: indexPath)
+        item.done = !item.done
+        saveItems()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
