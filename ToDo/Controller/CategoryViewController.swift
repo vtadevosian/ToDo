@@ -41,7 +41,13 @@ class CategoryViewController: UITableViewController {
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let destinationVC = segue.destination as? ToDoListViewController,
+            let indexPath = tableView.indexPathForSelectedRow else { return }
+        destinationVC.category = categories[indexPath.row]
+    }
+    
     // MARK: - Data Manipulation
     
     private func saveCategories() {
@@ -82,5 +88,7 @@ extension CategoryViewController {
 // MARK: - UITableViewDelegate
 
 extension CategoryViewController {
-    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "GoToItems", sender: self)
+    }
 }

@@ -13,14 +13,17 @@ class ToDoListViewController: UITableViewController {
 
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     var items: [Item] = []
+    var category: Category? {
+        didSet {
+            loadItems()
+        }
+    }
     
     @IBOutlet weak var searchBar: UISearchBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         searchBar.delegate = self
-        loadItems()
     }
     
     // MARK: - Add New Items
@@ -35,6 +38,7 @@ class ToDoListViewController: UITableViewController {
             let newItem = Item(context: context)
             newItem.title = itemTitle
             newItem.done = false
+            newItem.category = self.category
             self.items.append(newItem)
             self.saveItems()
         }
@@ -58,7 +62,17 @@ class ToDoListViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    private func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+    private func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(),
+                           predicate: NSPredicate? = nil) {
+        guard let categoryName = category?.name else { return }
+        
+        let categoryPredicate = NSPredicate(format: "category.name MATCHES %@", categoryName)
+        if let additionalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
         do {
             items = try context?.fetch(request) ?? []
         } catch {
@@ -102,10 +116,10 @@ extension ToDoListViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text,
             !text.isEmpty else { return }
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", text)
         let request: NSFetchRequest<Item> = Item.fetchRequest()
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", text)
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        loadItems(with: request)
+        loadItems(with: request, predicate: predicate)
         tableView.reloadData()
     }
     
