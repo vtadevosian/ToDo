@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: SwipeTableViewController {
 
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     var items: [Item] = []
@@ -23,16 +23,16 @@ class ToDoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        searchBar.delegate = self
     }
     
-    // MARK: - Add New Items
+    // MARK: - Data Manipulation
+    
     @IBAction func addButtonTapped(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         
         let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
-            guard let itemTitle = textField.text,
+            guard let itemTitle = textField.text, !itemTitle.isEmpty,
                 let context = self.context else { return }
             
             let newItem = Item(context: context)
@@ -81,6 +81,13 @@ class ToDoListViewController: UITableViewController {
         
         tableView.reloadData()
     }
+    
+    // MARK: - Data Deletion from Swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        context?.delete(items[indexPath.row])
+        items.remove(at: indexPath.row)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -91,7 +98,7 @@ extension ToDoListViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         let item = items[indexPath.row]
         cell.textLabel?.text = item.title
         cell.accessoryType = item.done ? .checkmark : .none

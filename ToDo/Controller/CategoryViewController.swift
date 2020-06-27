@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
 
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     var categories: [Category] = []
@@ -24,7 +24,7 @@ class CategoryViewController: UITableViewController {
         
         let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
-            guard let categoryName = textField.text,
+            guard let categoryName = textField.text, !categoryName.isEmpty,
                 let context = self.context else { return }
             
             let newCategory = Category(context: context)
@@ -69,6 +69,13 @@ class CategoryViewController: UITableViewController {
         
         tableView.reloadData()
     }
+    
+    // MARK: - Data Deletion from Swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        context?.delete(categories[indexPath.row])
+        categories.remove(at: indexPath.row)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -79,10 +86,11 @@ extension CategoryViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = categories[indexPath.row].name
         return cell
     }
+    
 }
 
 // MARK: - UITableViewDelegate
