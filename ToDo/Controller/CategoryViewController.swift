@@ -15,8 +15,12 @@ class CategoryViewController: SwipeTableViewController {
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     var categories: [Category] = []
         
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        searchBar.delegate = self
         loadCategories()
     }
 
@@ -102,5 +106,30 @@ extension CategoryViewController {
 extension CategoryViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "GoToItems", sender: self)
+    }
+}
+
+// MARK: - UISearchBarDelegate
+
+extension CategoryViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let text = searchBar.text,
+            !text.isEmpty else { return }
+        let predicate = NSPredicate(format: "name CONTAINS[cd] %@", text)
+        
+        let request: NSFetchRequest<Category> = Category.fetchRequest()
+        request.predicate = predicate
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        loadCategories(with: request)
+        tableView.reloadData()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadCategories()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
     }
 }

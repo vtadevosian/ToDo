@@ -23,6 +23,7 @@ class ToDoListViewController: SwipeTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.delegate = self
     }
     
     // MARK: - Data Manipulation
