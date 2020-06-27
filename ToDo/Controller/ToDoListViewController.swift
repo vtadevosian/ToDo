@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import ChameleonFramework
 
 class ToDoListViewController: SwipeTableViewController {
 
@@ -24,6 +25,26 @@ class ToDoListViewController: SwipeTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         searchBar.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let colorHex = category?.color,
+            let color = UIColor(hexString: colorHex) {
+            guard let navBar = navigationController?.navigationBar else {
+                fatalError("Navigation controller does not exist")
+            }
+            
+            let contrastColor = ContrastColorOf(color, returnFlat: true)
+            title = category!.name
+            navBar.barTintColor = color
+            navBar.largeTitleTextAttributes = [
+                NSAttributedString.Key.foregroundColor: UIColor(named: "systemWhite")
+            ]
+            
+            navBar.tintColor = color
+            searchBar.barTintColor = color
+        }
     }
     
     // MARK: - Data Manipulation
@@ -103,6 +124,13 @@ extension ToDoListViewController {
         let item = items[indexPath.row]
         cell.textLabel?.text = item.title
         cell.accessoryType = item.done ? .checkmark : .none
+        if let categoryColor = UIColor(hexString: category?.color ?? "FFFFFF")?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(items.count * 2)) {
+            
+            let contrastColor = ContrastColorOf(categoryColor, returnFlat: true)
+            cell.backgroundColor = categoryColor
+            cell.textLabel?.textColor = contrastColor
+            cell.tintColor = contrastColor
+        }
         return cell
     }
 }

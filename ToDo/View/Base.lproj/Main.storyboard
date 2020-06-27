@@ -6,7 +6,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--ToDo List-->
+        <!--Categories-->
         <scene sceneID="JYW-jN-8iD">
             <objects>
                 <tableViewController id="jdr-Os-Cj8" customClass="CategoryViewController" customModule="ToDo" customModuleProvider="target" sceneMemberID="viewController">
@@ -34,7 +34,7 @@
                             <outlet property="delegate" destination="jdr-Os-Cj8" id="OM3-bM-Nqg"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="ToDo List" id="MKS-nG-Uoe">
+                    <navigationItem key="navigationItem" title="Categories" id="MKS-nG-Uoe">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="7RB-Gz-eAz">
                             <color key="tintColor" red="0.0" green="0.24202208659999999" blue="0.32453600890000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             <connections>
@@ -51,7 +51,7 @@
             </objects>
             <point key="canvasLocation" x="954" y="224"/>
         </scene>
-        <!--Items-->
+        <!--ToDo List-->
         <scene sceneID="gcs-oS-Oaz">
             <objects>
                 <tableViewController id="HPY-Yg-BhH" customClass="ToDoListViewController" customModule="ToDo" customModuleProvider="target" sceneMemberID="viewController">
@@ -79,9 +79,8 @@
                             <outlet property="delegate" destination="HPY-Yg-BhH" id="j4k-GD-tED"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Items" id="2lE-4h-4ZU">
+                    <navigationItem key="navigationItem" title="ToDo List" id="2lE-4h-4ZU">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="vbS-Xq-ez7">
-                            <color key="tintColor" red="0.0" green="0.24202208659999999" blue="0.32453600890000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             <connections>
                                 <action selector="addButtonTapped:" destination="HPY-Yg-BhH" id="gzq-kx-Dhl"/>
                             </connections>
@@ -100,15 +99,12 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gMy-kc-YWx" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="JYt-sP-G92">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="JYt-sP-G92">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.6530532937483372" green="0.81633388077856439" blue="0.84380948604060912" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        <textAttributes key="titleTextAttributes">
-                            <color key="textColor" red="0.0" green="0.24202208656773921" blue="0.32453600888324874" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                        </textAttributes>
+                        <color key="barTintColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <textAttributes key="largeTitleTextAttributes">
-                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="textColor" cocoaTouchSystemColor="lightTextColor"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>

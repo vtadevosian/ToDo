@@ -11,10 +11,10 @@ import CoreData
 import ChameleonFramework
 
 class CategoryViewController: SwipeTableViewController {
-
+    
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     var categories: [Category] = []
-        
+    
     @IBOutlet weak var searchBar: UISearchBar!
     
     override func viewDidLoad() {
@@ -23,7 +23,12 @@ class CategoryViewController: SwipeTableViewController {
         searchBar.delegate = self
         loadCategories()
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+    }
+    
     @IBAction func addButtonTapped(_ sender: Any) {
         var textField = UITextField()
         
@@ -95,7 +100,12 @@ extension CategoryViewController {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         let category = categories[indexPath.row]
         cell.textLabel?.text = category.name
-        cell.backgroundColor = UIColor(hexString: category.color ?? "FFFFFF")
+        if let color = UIColor(hexString: category.color ?? "FFFFFF") {
+            let contrastColor = ContrastColorOf(color, returnFlat: true)
+            cell.textLabel?.textColor = contrastColor
+            cell.backgroundColor = color
+        }
+        
         return cell
     }
     
